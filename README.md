@@ -4,7 +4,7 @@ Easily use anvil guis to get a user's input.
 This project was made since there is no way to prompt users with an anvil input with the Spigot / Bukkit API. It requires interaction with NMS and that is a pain in plugins where users have different versions of the server running.
 
 ## Requirements
-Java 16 and Bukkit / Spigot. Most server versions in the [Spigot Repository](https://hub.spigotmc.org/nexus/) are supported.
+Java 8 and Bukkit / Spigot. Most server versions in the [Spigot Repository](https://hub.spigotmc.org/nexus/) are supported.
 
 ### My version isn't supported
 If you are a developer, submit a pull request adding a wrapper module for your version. Otherwise, please create an issue
@@ -19,13 +19,43 @@ AnvilGUI requires the usage of Maven or a Maven compatible build system.
 <dependency>
     <groupId>net.wesjd</groupId>
     <artifactId>anvilgui</artifactId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.5.3-SNAPSHOT</version>
 </dependency>
 
 <repository>
     <id>codemc-snapshots</id>
     <url>https://repo.codemc.io/repository/maven-snapshots/</url>
 </repository>
+```
+
+It is best to be a good citizen and relocate the dependency to within your namespace in order 
+to prevent conflicts with other plugins. Here is an example of how to relocate the dependency:
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>${shade.version}</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <relocations>
+                            <relocation>
+                                <pattern>net.wesjd.anvilgui</pattern>
+                                <shadedPattern>[YOUR_PLUGIN_PACKAGE].anvilgui</shadedPattern> <!-- Replace [YOUR_PLUGIN_PACKAGE] with your namespace -->
+                            </relocation>
+                        </relocations>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 ```
 
 ### In your plugin
@@ -153,7 +183,7 @@ new AnvilGUI.Builder()
                                                                                                                                                                                                                                                                               
 
 ## Compilation
-Build with `mvn clean install`.
+Build with `mvn clean install` using Java 16.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
